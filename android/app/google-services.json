@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "751562297279",
+    "project_id": "matbucks-erp",
+    "storage_bucket": "matbucks-erp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:751562297279:android:3e704c84c0c2c061da1b0a",
+        "android_client_info": {
+          "package_name": "com.example.admin_er"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWAHQzDGaGJIeQ4dl88nNXuAMkbj9F_jE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:751562297279:android:b70ef7e582210cb2da1b0a",
+        "android_client_info": {
+          "package_name": "com.example.school_erp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWAHQzDGaGJIeQ4dl88nNXuAMkbj9F_jE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
