@@ -110,7 +110,7 @@ class _SendFeeScreenState extends State<SendFeeScreen> {
                         TextField(
                           controller: _dueDateController,
                           decoration: InputDecoration(
-                            labelText: 'Due Date',
+                            labelText: 'Last Date',
                             prefixIcon: Icon(Icons.date_range),
                           ),
                         ),
