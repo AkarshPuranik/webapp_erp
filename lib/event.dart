@@ -2,7 +2,7 @@ import 'package:admin_er/event_model.dart'; // Ensure this is the correct path
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:video_player/video_player.dart';
+import 'package:intl/intl.dart';
 
 class EventManagement extends StatefulWidget {
   const EventManagement({super.key});
@@ -14,10 +14,12 @@ class EventManagement extends StatefulWidget {
 class _EventManagementState extends State<EventManagement> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
   DateTime? _selectedDate;
   List<String> _mediaUrls = [];
+  List<String> _mediaNames = []; // List to store media file names
   bool _isLoading = false;
-  String? _currentEventId; // To store the current event ID for editing
+  String? _currentEventId;
 
   @override
   Widget build(BuildContext context) {
@@ -92,10 +94,12 @@ class _EventManagementState extends State<EventManagement> {
   void _showEventForm() {
     _titleController.clear();
     _descriptionController.clear();
+    _dateController.clear();
     setState(() {
       _selectedDate = null;
       _mediaUrls.clear();
-      _currentEventId = null; // Reset event ID when showing form
+      _mediaNames.clear(); // Clear media names
+      _currentEventId = null;
     });
 
     showDialog(
@@ -132,67 +136,90 @@ class _EventManagementState extends State<EventManagement> {
             controller: _descriptionController,
             decoration: const InputDecoration(labelText: 'Event Description'),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _selectedDate == null
-                    ? 'No date chosen'
-                    : 'Date: ${_selectedDate!.toLocal().toString().split(' ')[0]}',
-              ),
-              TextButton(
-                child: const Text('Choose Date'),
-                onPressed: () async {
-                  final DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: _selectedDate ?? DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2101),
-                  );
-                  if (pickedDate != null) {
-                    setState(() {
-                      _selectedDate = pickedDate;
-                    });
-                  }
-                },
-              ),
-            ],
+          TextField(
+            controller: _dateController,
+            readOnly: true,
+            decoration: const InputDecoration(labelText: 'Event Date'),
+            onTap: _selectDate,
           ),
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: _pickMedia,
-            child: const Text('Add Media (Images, Videos, Files)'),
+            child: const Text('Add Media (Images & Documents)'),
           ),
           const SizedBox(height: 10),
           _mediaUrls.isNotEmpty
               ? Wrap(
                   spacing: 8.0,
                   children: _mediaUrls.map((url) {
-                    return Stack(
-                      children: [
-                        Column(
-                          children: [
-                            _mediaPreview(url),
-                            const SizedBox(height: 4),
-                            Text(
-                              _shortenFileName(url),
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ],
-                        ),
-                        Positioned(
-                          right: 10,
-                          child: IconButton(
-                            icon: const Icon(Icons.delete, size: 18),
-                            onPressed: () {
-                              setState(() {
-                                _mediaUrls.remove(url);
-                              });
-                            },
+                    final fileName = _mediaNames[_mediaUrls.indexOf(url)];
+                    if (url.endsWith('.jpg') || url.endsWith('.png')) {
+                      // Display image preview
+                      return Stack(
+                        children: [
+                          Column(
+                            children: [
+                              Image.network(
+                                url,
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return const CircularProgressIndicator();
+                                },
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                fileName,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    );
+                          Positioned(
+                            right: 10,
+                            child: IconButton(
+                              icon: const Icon(Icons.delete, size: 18),
+                              onPressed: () {
+                                setState(() {
+                                  _mediaUrls.remove(url);
+                                  _mediaNames.remove(fileName);
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      // Display icon with cross mark for non-image files
+                      return Stack(
+                        children: [
+                          Column(
+                            children: [
+                              Icon(Icons.insert_drive_file, size: 40),
+                              const SizedBox(height: 4),
+                              Text(
+                                fileName,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+                          Positioned(
+                            right: 10,
+                            child: IconButton(
+                              icon: const Icon(Icons.delete, size: 18),
+                              onPressed: () {
+                                setState(() {
+                                  _mediaUrls.remove(url);
+                                  _mediaNames.remove(fileName);
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    }
                   }).toList(),
                 )
               : const SizedBox.shrink(),
@@ -201,36 +228,20 @@ class _EventManagementState extends State<EventManagement> {
     );
   }
 
-  Widget _mediaPreview(String url) {
-    if (url.endsWith('.jpg') || url.endsWith('.jpeg') || url.endsWith('.png')) {
-      return Image.network(
-        url,
-        width: 80,
-        height: 80,
-        fit: BoxFit.cover,
-      );
-    } else if (url.endsWith('.mp4')) {
-      return VideoPlayerWidget(url: url);
-    } else {
-      return const Icon(Icons.insert_drive_file, size: 80);
-    }
-  }
-
-  String _shortenFileName(String filePath) {
-    final fileName = filePath.split('/').last;
-    return fileName.length > 15 ? '${fileName.substring(0, 15)}...' : fileName;
-  }
-
   Future<void> _pickMedia() async {
     setState(() {
       _isLoading = true;
     });
 
-    final result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.any, // Allow any file type
+    );
     if (result != null) {
       setState(() {
         _mediaUrls.addAll(
             result.paths.where((path) => path != null).map((path) => path!));
+        _mediaNames.addAll(result.names as Iterable<String>);
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -246,19 +257,18 @@ class _EventManagementState extends State<EventManagement> {
   void _submitEvent() async {
     if (_titleController.text.isNotEmpty &&
         _descriptionController.text.isNotEmpty &&
-        _selectedDate != null) {
+        _dateController.text.isNotEmpty) {
       setState(() {
         _isLoading = true;
       });
 
       Event event;
       if (_currentEventId != null) {
-        // Editing an existing event
         event = Event(
           id: _currentEventId!,
           title: _titleController.text,
           description: _descriptionController.text,
-          date: _selectedDate!,
+          date: DateTime.parse(_dateController.text),
           mediaUrls: _mediaUrls,
         );
 
@@ -267,12 +277,11 @@ class _EventManagementState extends State<EventManagement> {
             .doc(_currentEventId)
             .update(event.toMap());
       } else {
-        // Creating a new event
         event = Event(
           id: '', // Will be set when added to Firestore
           title: _titleController.text,
           description: _descriptionController.text,
-          date: _selectedDate!,
+          date: DateTime.parse(_dateController.text),
           mediaUrls: _mediaUrls,
         );
 
@@ -294,12 +303,18 @@ class _EventManagementState extends State<EventManagement> {
   }
 
   void _editEvent(Event event) {
+    // Populate the controllers with the current event data
     _titleController.text = event.title;
     _descriptionController.text = event.description;
-    _selectedDate = event.date;
-    _mediaUrls = event.mediaUrls;
-    _currentEventId = event.id; // Store the event ID for editing
+    _dateController.text = DateFormat('yyyy-MM-dd')
+        .format(event.date); // Format the date for display
+    _mediaUrls = event.mediaUrls; // Load existing media URLs
+    _mediaNames = event.mediaUrls
+        .map((url) => url.split('/').last)
+        .toList(); // Extract file names from URLs
+    _currentEventId = event.id; // Store the current event ID
 
+    // Show the event form dialog
     _showEventForm();
   }
 
@@ -332,49 +347,21 @@ class _EventManagementState extends State<EventManagement> {
       },
     );
   }
-}
 
-class VideoPlayerWidget extends StatefulWidget {
-  final String url;
-
-  const VideoPlayerWidget({super.key, required this.url});
-
-  @override
-  _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
-}
-
-class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  late VideoPlayerController _controller;
-  bool _isInitialized = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeVideoPlayer();
-  }
-
-  void _initializeVideoPlayer() async {
-    _controller = VideoPlayerController.network(widget.url);
-    await _controller.initialize();
-    setState(() {
-      _isInitialized = true;
-    });
-    _controller.play();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _isInitialized
-        ? AspectRatio(
-            aspectRatio: _controller.value.aspectRatio,
-            child: VideoPlayer(_controller),
-          )
-        : const CircularProgressIndicator();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void _selectDate() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        _selectedDate = pickedDate;
+        // Format the date as needed, for example:
+        _dateController.text = DateFormat('yyyy-MM-dd')
+            .format(_selectedDate!); // Use intl package for formatting
+      });
+    }
   }
 }
