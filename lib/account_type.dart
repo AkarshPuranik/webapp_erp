@@ -5,6 +5,7 @@ import 'package:admin_er/signup_screen.dart';
 import 'package:admin_er/teacher_create_account.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class AccountType extends StatefulWidget {
   const AccountType({super.key});
@@ -32,10 +33,11 @@ class _AccountTypeState extends State<AccountType> {
                     duration: Duration(seconds: 2),
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (_) => const SignupScreen()),
-                        );
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                type: PageTransitionType.fade,
+                                child: SignupScreen()));
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -63,10 +65,11 @@ class _AccountTypeState extends State<AccountType> {
                     duration: Duration(seconds: 2),
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (_) => const TeacherCreateAccount()),
-                        );
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                type: PageTransitionType.fade,
+                                child: TeacherCreateAccount()));
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -91,11 +94,12 @@ class _AccountTypeState extends State<AccountType> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => EventCreationPage()),
+                          MaterialPageRoute(
+                              builder: (context) => EventCreationPage()),
                         );
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.red),
+                        backgroundColor: WidgetStateProperty.all(Colors.red),
                       ),
                       label: const Text(
                         'Post events',
@@ -114,11 +118,12 @@ class _AccountTypeState extends State<AccountType> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => SendFeeScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => SendFeeScreen()),
                         );
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.red),
+                        backgroundColor: WidgetStateProperty.all(Colors.red),
                       ),
                       label: const Text(
                         'Fee Receipt',
