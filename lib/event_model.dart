@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Event {
-  String id; // Unique identifier for Firestore document
+  String id;
   String title;
   String description;
   DateTime date;

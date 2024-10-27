@@ -20,128 +20,120 @@ class _AccountTypeState extends State<AccountType> {
       appBar: AppBar(
         title: const Text('Account Type'),
       ),
-      // backgroundColor: Color(0xFF5D83C6),
       body: SafeArea(
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ZoomIn(
-                      duration: Duration(seconds: 2),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const SignupScreen()));
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black,
-                              width: 3,
-                            ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ZoomIn(
+                    duration: Duration(seconds: 2),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const SignupScreen()),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 3,
                           ),
-                          height: 200,
-                          width: 200,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset('assets/download.png'),
-                          ),
+                        ),
+                        height: 200,
+                        width: 200,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset('assets/download.png'),
                         ),
                       ),
                     ),
-                    const Text(
-                      '-----or-----',
-                      style: TextStyle(color: Colors.black, fontSize: 40),
-                    ),
-                    ZoomIn(
-                      duration: Duration(seconds: 2),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) =>
-                                      const TeacherCreateAccount()));
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black,
-                              width: 3,
-                            ),
-                          ),
-                          height: 200,
-                          width: 200,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset('assets/8065183.png'),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    '-----or-----',
+                    style: TextStyle(color: Colors.black, fontSize: 40),
+                  ),
+                  const SizedBox(height: 10),
+                  ZoomIn(
+                    duration: Duration(seconds: 2),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const TeacherCreateAccount()),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 3,
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    FadeInRight(
-                      duration: Duration(seconds: 2),
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EventManagement()),
-                          );
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(Colors.red),
-                        ),
-                        label: const Text(
-                          'Post events',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        icon: const Icon(
-                          Icons.event,
-                          color: Colors.black,
+                        height: 200,
+                        width: 200,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset('assets/8065183.png'),
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    FadeInLeft(
-                      duration: Duration(seconds: 2),
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SendFeeScreen()),
-                          );
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(Colors.red),
-                        ),
-                        label: const Text(
-                          'Fee Receipt',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        icon: const Icon(
-                          Icons.credit_score,
-                          color: Colors.black,
-                        ),
+                  ),
+                  const SizedBox(height: 30),
+                  FadeInRight(
+                    duration: Duration(seconds: 2),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => EventCreationPage()),
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.red),
+                      ),
+                      label: const Text(
+                        'Post events',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      icon: const Icon(
+                        Icons.event,
+                        color: Colors.black,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 20),
+                  FadeInLeft(
+                    duration: Duration(seconds: 2),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SendFeeScreen()),
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.red),
+                      ),
+                      label: const Text(
+                        'Fee Receipt',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      icon: const Icon(
+                        Icons.credit_score,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            )
-          ],
+            ),
+          ),
         ),
       ),
     );
